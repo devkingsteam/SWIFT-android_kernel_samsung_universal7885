@@ -15,6 +15,7 @@
 #include <linux/selinux.h>
 
 #include "security.h"
+#include "avc.h"
 
 bool selinux_is_enabled(void)
 {

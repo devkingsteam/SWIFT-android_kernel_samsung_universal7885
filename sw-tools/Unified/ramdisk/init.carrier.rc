@@ -1,0 +1,18 @@
+
+on init
+#omr
+    mkdir /omr 0771 system system
+
+on fs
+#omr
+    wait /dev/block/platform/13500000.dwmmc0/by-name/OMR
+    mount ext4 /dev/block/platform/13500000.dwmmc0/by-name/OMR /omr nosuid nodev noatime noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic
+    chown system system /omr
+    chmod 0771 /omr
+
+# IMS Stack
+service imsd /system/bin/imsd
+    class main
+    socket imsd stream 0660 system system
+    user root
+    group system radio net_raw inet net_admin readproc
