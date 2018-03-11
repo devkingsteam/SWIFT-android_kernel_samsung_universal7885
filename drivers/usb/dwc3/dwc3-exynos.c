@@ -491,21 +491,30 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
 		}
 	}
 
+	ret = dwc3_exynos_register_phys(exynos);
+	if (ret) {
+		dev_err(dev, "couldn't register PHYs\n");
+		goto err4;
+	}
+
 	if (node) {
 		ret = of_platform_populate(node, NULL, NULL, dev);
 		if (ret) {
 			dev_err(dev, "failed to add dwc3 core\n");
-			goto err4;
+			goto err5;
 		}
 	} else {
 		dev_err(dev, "no device node, failed to add dwc3 core\n");
 		ret = -ENODEV;
-		goto err4;
+		goto err5;
 	}
 
 	pr_info("%s: ---\n", __func__);
 	return 0;
 
+err5:
+	platform_device_unregister(exynos->usb2_phy);
+	platform_device_unregister(exynos->usb3_phy);
 err4:
 	if (exynos->vdd10)
 		regulator_disable(exynos->vdd10);
@@ -513,10 +522,17 @@ err3:
 	if (exynos->vdd33)
 		regulator_disable(exynos->vdd33);
 err2:
+<<<<<<< HEAD
 	pm_runtime_disable(&pdev->dev);
 	dwc3_exynos_clk_disable(exynos);
 	dwc3_exynos_clk_unprepare(exynos);
 	pm_runtime_set_suspended(&pdev->dev);
+=======
+	clk_disable_unprepare(exynos->axius_clk);
+axius_clk_err:
+	clk_disable_unprepare(exynos->susp_clk);
+	clk_disable_unprepare(exynos->clk);
+>>>>>>> linux-stable/linux-4.4.y
 	return ret;
 }
 

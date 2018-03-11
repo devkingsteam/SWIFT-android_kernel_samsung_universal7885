@@ -136,6 +136,10 @@ static bool __cfg80211_unlink_bss(struct cfg80211_registered_device *rdev,
 
 	list_del_init(&bss->list);
 	rb_erase(&bss->rbn, &rdev->bss_tree);
+	rdev->bss_entries--;
+	WARN_ONCE((rdev->bss_entries == 0) ^ list_empty(&rdev->bss_list),
+		  "rdev bss entries[%d]/list[empty:%d] corruption\n",
+		  rdev->bss_entries, list_empty(&rdev->bss_list));
 	bss_ref_put(rdev, bss);
 	return true;
 }
@@ -160,6 +164,40 @@ static void __cfg80211_bss_expire(struct cfg80211_registered_device *rdev,
 
 	if (expired)
 		rdev->bss_generation++;
+}
+
+static bool cfg80211_bss_expire_oldest(struct cfg80211_registered_device *rdev)
+{
+	struct cfg80211_internal_bss *bss, *oldest = NULL;
+	bool ret;
+
+	lockdep_assert_held(&rdev->bss_lock);
+
+	list_for_each_entry(bss, &rdev->bss_list, list) {
+		if (atomic_read(&bss->hold))
+			continue;
+
+		if (!list_empty(&bss->hidden_list) &&
+		    !bss->pub.hidden_beacon_bss)
+			continue;
+
+		if (oldest && time_before(oldest->ts, bss->ts))
+			continue;
+		oldest = bss;
+	}
+
+	if (WARN_ON(!oldest))
+		return false;
+
+	/*
+	 * The callers make sure to increase rdev->bss_generation if anything
+	 * gets removed (and a new entry added), so there's no need to also do
+	 * it here.
+	 */
+
+	ret = __cfg80211_unlink_bss(rdev, oldest);
+	WARN_ON(!ret);
+	return ret;
 }
 
 void ___cfg80211_scan_done(struct cfg80211_registered_device *rdev,
@@ -687,6 +725,7 @@ static bool cfg80211_combine_bsses(struct cfg80211_registered_device *rdev,
 	const u8 *ie;
 	int i, ssidlen;
 	u8 fold = 0;
+	u32 n_entries = 0;
 
 	ies = rcu_access_pointer(new->pub.beacon_ies);
 	if (WARN_ON(!ies))
@@ -710,6 +749,12 @@ static bool cfg80211_combine_bsses(struct cfg80211_registered_device *rdev,
 	/* This is the bad part ... */
 
 	list_for_each_entry(bss, &rdev->bss_list, list) {
+		/*
+		 * we're iterating all the entries anyway, so take the
+		 * opportunity to validate the list length accounting
+		 */
+		n_entries++;
+
 		if (!ether_addr_equal(bss->pub.bssid, new->pub.bssid))
 			continue;
 		if (bss->pub.channel != new->pub.channel)
@@ -737,6 +782,10 @@ static bool cfg80211_combine_bsses(struct cfg80211_registered_device *rdev,
 		rcu_assign_pointer(bss->pub.beacon_ies,
 				   new->pub.beacon_ies);
 	}
+
+	WARN_ONCE(n_entries != rdev->bss_entries,
+		  "rdev bss entries[%d]/list[len:%d] corruption\n",
+		  rdev->bss_entries, n_entries);
 
 	return true;
 }
@@ -890,7 +939,14 @@ cfg80211_bss_update(struct cfg80211_registered_device *rdev,
 			}
 		}
 
+		if (rdev->bss_entries >= bss_entries_limit &&
+		    !cfg80211_bss_expire_oldest(rdev)) {
+			kfree(new);
+			goto drop;
+		}
+
 		list_add_tail(&new->list, &rdev->bss_list);
+		rdev->bss_entries++;
 		rb_insert_bss(rdev, new);
 		found = new;
 	}

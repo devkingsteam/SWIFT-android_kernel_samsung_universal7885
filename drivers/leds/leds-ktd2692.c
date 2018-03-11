@@ -560,4 +560,3 @@ MODULE_AUTHOR("sunggeun yim <sunggeun.yim@samsung.com.com>");
 MODULE_DESCRIPTION("KTD2692 driver");
 MODULE_LICENSE("GPL");
 
-
