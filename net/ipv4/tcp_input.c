@@ -3520,12 +3520,7 @@ static void tcp_send_challenge_ack(struct sock *sk, const struct sk_buff *skb)
 	static u32 challenge_timestamp;
 	static unsigned int challenge_count;
 	struct tcp_sock *tp = tcp_sk(sk);
-<<<<<<< HEAD
-	u32 now;
-	u32 count;
-=======
 	u32 count, now;
->>>>>>> linux-stable/linux-4.4.y
 
 	/* First check our per-socket dupack rate limit. */
 	if (__tcp_oow_rate_limited(sock_net(sk),
@@ -3539,21 +3534,12 @@ static void tcp_send_challenge_ack(struct sock *sk, const struct sk_buff *skb)
 		u32 half = (sysctl_tcp_challenge_ack_limit + 1) >> 1;
 
 		challenge_timestamp = now;
-<<<<<<< HEAD
-		challenge_count = half +
-				  prandom_u32_max(sysctl_tcp_challenge_ack_limit);
-	}
-	count = challenge_count;
-	if (count > 0) {
-		challenge_count = count - 1;
-=======
 		WRITE_ONCE(challenge_count, half +
 			   prandom_u32_max(sysctl_tcp_challenge_ack_limit));
 	}
 	count = READ_ONCE(challenge_count);
 	if (count > 0) {
 		WRITE_ONCE(challenge_count, count - 1);
->>>>>>> linux-stable/linux-4.4.y
 		NET_INC_STATS_BH(sock_net(sk), LINUX_MIB_TCPCHALLENGEACK);
 		tcp_send_ack(sk);
 	}
