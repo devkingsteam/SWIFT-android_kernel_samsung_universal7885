@@ -1,1 +1,1 @@
-#define UTS_RELEASE "4.4.120"
+#define UTS_RELEASE "4.4.120-Swift_Kernel-v1-A530F-20180317"

@@ -69,7 +69,12 @@
 #include <net/netns/generic.h>
 
 #include "audit.h"
+
+// [ SEC_SELINUX_PORTING_EXYNOS
+#ifdef CONFIG_SEC_AVC_LOG
 #include <linux/sec_debug.h>
+#endif
+// ] SEC_SELINUX_PORTING_EXYNOS
 
 /* No auditing will take place until audit_initialized == AUDIT_INITIALIZED.
  * (Initialization happens after skb_init is called.) */
@@ -87,7 +92,7 @@ u32		audit_ever_enabled = !!AUDIT_OFF;
 EXPORT_SYMBOL_GPL(audit_enabled);
 
 /* Default state when kernel boots without any parameters. */
-static u32	audit_default = 1;
+static u32	audit_default = AUDIT_OFF;
 
 /* If auditing cannot proceed, audit_failure selects what happens. */
 static u32	audit_failure = AUDIT_FAIL_PRINTK;
