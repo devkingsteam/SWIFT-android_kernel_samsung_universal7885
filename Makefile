@@ -370,11 +370,6 @@ PERL		= perl
 PYTHON		= python
 CHECK		= sparse
 
-ifeq ($(CONFIG_CRYPTO_FIPS),)
-    READELF        = $(CROSS_COMPILE)readelf
-    export READELF
-endif
-
 ifeq ($(CONFIG_FIPS_FMP),)
     READELF        = $(CROSS_COMPILE)readelf
     export READELF
@@ -673,10 +668,6 @@ else
 KBUILD_CFLAGS   += -O2
 endif
 endif
-
-KBUILD_CFLAGS 	+= $(call cc-disable-warning,maybe-uninitialized,) \
-		   $(call cc-disable-warning,unused-variable,) \
-		   $(call cc-disable-warning,unused-function)
 
 # Tell gcc to never replace conditional load with a non-conditional one
 KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)

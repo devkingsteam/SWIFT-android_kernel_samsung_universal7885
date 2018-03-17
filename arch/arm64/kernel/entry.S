@@ -346,7 +346,7 @@ el1_da:
 	/*
 	 * Data abort handling
 	 */
-	mrs	x0, far_el1
+	mrs	x3, far_el1
 
 	enable_dbg
 

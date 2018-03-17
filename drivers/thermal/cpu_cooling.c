@@ -162,7 +162,6 @@ static unsigned long get_level(struct cpufreq_cooling_device *cpufreq_dev,
 unsigned long cpufreq_cooling_get_level(unsigned int cpu, unsigned int freq)
 {
 	struct cpufreq_cooling_device *cpufreq_dev;
-	unsigned long level = 0;
 
 	mutex_lock(&cooling_list_lock);
 	list_for_each_entry(cpufreq_dev, &cpufreq_dev_list, node) {

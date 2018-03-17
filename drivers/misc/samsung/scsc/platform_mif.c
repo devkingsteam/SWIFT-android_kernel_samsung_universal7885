@@ -148,7 +148,6 @@ struct platform_mif {
 	void *suspendresume_data;
 };
 
-
 #define platform_mif_from_mif_abs(MIF_ABS_PTR) container_of(MIF_ABS_PTR, struct platform_mif, interface)
 
 #ifdef CONFIG_SCSC_CLK20MHZ
