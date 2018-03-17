@@ -1651,10 +1651,6 @@ static int fanout_add(struct sock *sk, u16 id, u16 type_flags)
 	}
 
 	mutex_lock(&fanout_mutex);
-	
-	err = -EINVAL;
-	if (!po->running)
-		goto out;
 
 	err = -EALREADY;
 	if (po->fanout)
@@ -1669,8 +1665,6 @@ static int fanout_add(struct sock *sk, u16 id, u16 type_flags)
 		atomic_long_set(&rollover->num, 0);
 		atomic_long_set(&rollover->num_huge, 0);
 		atomic_long_set(&rollover->num_failed, 0);
-		po->rollover = rollover;
-
 	}
 
 	match = NULL;
@@ -1730,10 +1724,7 @@ static int fanout_add(struct sock *sk, u16 id, u16 type_flags)
 	}
 
 out:
-	if (err && rollover) {
-		kfree(rollover);
-		po->rollover = NULL;
-	}
+	kfree(rollover);
 	mutex_unlock(&fanout_mutex);
 	return err;
 }
@@ -1753,20 +1744,15 @@ static struct packet_fanout *fanout_release(struct sock *sk)
 	if (f) {
 		po->fanout = NULL;
 
-
-		if (atomic_dec_and_test(&f->sk_ref)) {
+		if (atomic_dec_and_test(&f->sk_ref))
 			list_del(&f->list);
-			dev_remove_pack(&f->prot_hook);
-			fanout_release_data(f);
-			kfree(f);
-		}
-
-
-	if (po->rollover)
-			kfree_rcu(po->rollover, rcu);
+		else
+			f = NULL;
 	}
 	mutex_unlock(&fanout_mutex);
 
+	return f;
+}
 
 static bool packet_extra_vlan_len_allowed(const struct net_device *dev,
 					  struct sk_buff *skb)
@@ -3649,6 +3635,8 @@ packet_setsockopt(struct socket *sock, int level, int optname, char __user *optv
 			return -EINVAL;
 		if (copy_from_user(&val, optval, sizeof(val)))
 			return -EFAULT;
+		if (val > INT_MAX)
+			return -EINVAL;
 		lock_sock(sk);
 		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
 			ret = -EBUSY;

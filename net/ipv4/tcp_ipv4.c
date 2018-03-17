@@ -924,7 +924,7 @@ void tcp_v4_reqsk_send_ack(const struct sock *sk, struct sk_buff *skb,
 #ifdef CONFIG_MPTCP
 			0, 
 #endif 
-			req->rsk_rcv_wnd,
+			req->rsk_rcv_wnd >> inet_rsk(req)->rcv_wscale,
 			tcp_time_stamp,
 			req->ts_recent,
 			0,
@@ -1317,7 +1317,7 @@ static void tcp_v4_init_req(struct request_sock *req,
 	sk_rcv_saddr_set(req_to_sk(req), ip_hdr(skb)->daddr);
 	sk_daddr_set(req_to_sk(req), ip_hdr(skb)->saddr);
 	ireq->no_srccheck = inet_sk(sk_listener)->transparent;
-	ireq->opt = tcp_v4_save_options(skb);
+	RCU_INIT_POINTER(ireq->ireq_opt, tcp_v4_save_options(skb));
 
 #ifdef CONFIG_MPTCP
 	return 0;

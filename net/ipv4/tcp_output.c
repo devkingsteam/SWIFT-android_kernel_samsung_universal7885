@@ -1361,7 +1361,7 @@ int tcp_fragment(struct sock *sk, struct sk_buff *skb, u32 len,
 #ifndef CONFIG_MPTCP
 static
 #endif
-void __pskb_trim_head(struct sk_buff *skb, int len)
+int __pskb_trim_head(struct sk_buff *skb, int len)
 {
 	struct skb_shared_info *shinfo;
 	int i, k, eat;
