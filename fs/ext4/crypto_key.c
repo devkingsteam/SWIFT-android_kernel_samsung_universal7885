@@ -90,8 +90,6 @@ void ext4_free_crypt_info(struct ext4_crypt_info *ci)
 	if (!ci)
 		return;
 
-	if (ci->ci_keyring_key)
-		key_put(ci->ci_keyring_key);
 	if (!ci->private_enc_mode)
 		crypto_free_ablkcipher(ci->ci_ctfm);
 	kmem_cache_free(ext4_crypt_info_cachep, ci);
@@ -281,12 +279,6 @@ got_key:
 			goto out;
 	}
 	inode->i_mapping->private_enc_mode = crypt_info->private_enc_mode;
-	memzero_explicit(raw_key, sizeof(raw_key));
-	if (cmpxchg(&ei->i_crypt_info, NULL, crypt_info) != NULL) {
-		ext4_free_crypt_info(crypt_info);
-		goto retry;
-	}
-	return 0;
 
 	if (cmpxchg(&ei->i_crypt_info, NULL, crypt_info) == NULL)
 		crypt_info = NULL;

@@ -522,17 +522,10 @@ err3:
 	if (exynos->vdd33)
 		regulator_disable(exynos->vdd33);
 err2:
-<<<<<<< HEAD
 	pm_runtime_disable(&pdev->dev);
 	dwc3_exynos_clk_disable(exynos);
 	dwc3_exynos_clk_unprepare(exynos);
 	pm_runtime_set_suspended(&pdev->dev);
-=======
-	clk_disable_unprepare(exynos->axius_clk);
-axius_clk_err:
-	clk_disable_unprepare(exynos->susp_clk);
-	clk_disable_unprepare(exynos->clk);
->>>>>>> linux-stable/linux-4.4.y
 	return ret;
 }
 

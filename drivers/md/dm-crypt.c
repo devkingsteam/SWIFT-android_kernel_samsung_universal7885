@@ -1658,10 +1658,6 @@ static void crypt_dtr(struct dm_target *ti)
 
 	if (!cc->hw_fmp) {
 		if (cc->write_thread) {
-			spin_lock_irq(&cc->write_thread_wait.lock);
-			set_bit(DM_CRYPT_EXIT_THREAD, &cc->flags);
-			wake_up_locked(&cc->write_thread_wait);
-			spin_unlock_irq(&cc->write_thread_wait.lock);
 			kthread_stop(cc->write_thread);
 		}
 

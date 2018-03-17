@@ -182,6 +182,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
 	unsigned long timo;
 	key_ref_t key_ref, skey_ref;
 	char xbuf[16];
+	short state;
 	int rc;
 
 	struct keyring_search_context ctx = {
