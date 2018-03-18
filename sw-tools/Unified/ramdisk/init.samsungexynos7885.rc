@@ -1,3 +1,5 @@
+setprop persist.spectrum.kernel Swift
+
 import init.samsungexynos7885.usb.rc
 import init.baseband.rc
 import init.carrier.rc
