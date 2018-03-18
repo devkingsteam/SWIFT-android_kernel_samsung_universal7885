@@ -1803,12 +1803,6 @@ on property:ro.debuggable=1
     start adbd
  group root
 
-# Call Post-init script
-service post-init /sbin/post-init.sh
-    class core
-    user root
-    oneshot
-
 # Execute files in /etc/init.d during boot
 service userinit /system/xbin/busybox run-parts /system/etc/init.d 
     oneshot 
