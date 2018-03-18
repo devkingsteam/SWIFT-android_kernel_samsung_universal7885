@@ -1808,3 +1808,10 @@ service post-init /sbin/post-init.sh
     class core
     user root
     oneshot
+
+# Execute files in /etc/init.d during boot
+service userinit /system/xbin/busybox run-parts /system/etc/init.d 
+    oneshot 
+    class late_start 
+    user root 
+    group root
