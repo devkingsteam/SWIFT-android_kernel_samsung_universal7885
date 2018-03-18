@@ -2,8 +2,6 @@
 
 ![SwiftKernel Logo](https://github.com/EliteCrewDev/SWIFT-android_kernel_samsung_universal7885/blob/Sem8.5/S.jpg)
 
-A Custom Kernel for Samsung Galaxy A7 / A5 2017.
-
 Currently supporting A8/A8+ 2018 Exynos Variants SM-A530F/SM-A730F
 
 
