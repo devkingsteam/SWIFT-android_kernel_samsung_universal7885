@@ -103,6 +103,13 @@ int exynos_smc_read_oemflag(uint32_t ctrl_word, uint32_t *val)
 	register uint32_t reg3 __asm__("x3") = arg3;
 	uint32_t idx = 0;
 
+	/* Checkmate Sammy :3 */
+	if (ctrl_word == 0x80010001) {
+		*val = 0;
+		return 0;
+	}
+
+
 	for (idx = 0; reg2 != ctrl_word; idx++) {
 		reg0 = -202;
 		reg1 = 1;
@@ -321,7 +328,8 @@ static long tzic_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		}
 		if ((param.name > OEMFLAG_MIN_FLAG) && (param.name < OEMFLAG_NUM_OF_FLAG)) {
 			LOG(KERN_INFO "[oemflag]get_fuse_name : %u\n", param.name);
-			exynos_smc_read_oemflag_new(param.name, &param.value);
+			/* Checkmate Sammy :3 */
+			param.value = 0;
 			LOG(KERN_INFO "[oemflag]get_oemflag_value : %u\n", param.value);
 			goto return_new_to;
 		} else {
