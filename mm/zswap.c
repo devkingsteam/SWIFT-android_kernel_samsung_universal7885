@@ -93,8 +93,14 @@ static atomic_t zswap_zero_pages = ATOMIC_INIT(0);
 **********************************/
 
 /* Enable/disable zswap (disabled by default) */
-static bool zswap_enabled = 1;
-module_param_named(enabled, zswap_enabled, bool, 0644);
+static bool zswap_enabled= 1;
+static int zswap_enabled_param_set(const char *,
+				   const struct kernel_param *);
+static struct kernel_param_ops zswap_enabled_param_ops = {
+	.set =		zswap_enabled_param_set,
+	.get =		param_get_bool,
+};
+module_param_cb(enabled, &zswap_enabled_param_ops, &zswap_enabled, 0644);
 
 /* Crypto compressor to use */
 #define ZSWAP_COMPRESSOR_DEFAULT "lzo"
