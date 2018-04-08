@@ -17,7 +17,7 @@
 
 clear
 # Init Fields
-SW_VERSION=v1
+SW_VERSION=v2
 SW_DATE=$(date +%Y%m%d)
 SW_TOOLCHAIN=/home/taif/kernel/toolchain/UBERTC-aarch64-linux-android-4.9/bin/aarch64-linux-android-
 SW_JOBS=5
