@@ -20,7 +20,7 @@ clear
 SW_VERSION=v2
 SW_DATE=$(date +%Y%m%d)
 SW_TOOLCHAIN=/home/taif/kernel/toolchain/UBERTC-aarch64-linux-android-4.9/bin/aarch64-linux-android-
-SW_JOBS=5
+SW_JOBS=7
 SW_DIR=$(pwd)
 export ARCH=arm64
 export ANDROID_MAJOR_VERSION=n
@@ -68,7 +68,7 @@ PACK_JACPOTLTE_IMG()
 	mv $SW_DIR/arch/arm64/boot/Image $SW_DIR/sw-tools/AIK-Linux/split_img/boot.img-zImage
 	mv $(pwd)/dtb.img $SW_DIR/sw-tools/AIK-Linux/split_img/boot.img-dtb
 	$SW_DIR/sw-tools/AIK-Linux/repackimg.sh --nosudo
-	mv $SW_DIR/sw-tools/AIK-Linux/image-new.img $SW_DIR/sw-tools/out/boot-$SW_VARIANT-$SW_DATE.img
+	mv $SW_DIR/sw-tools/AIK-Linux/image-new.img $SW_DIR/sw-tools/out/boot-$SW_VARIANT.img
 	$SW_DIR/sw-tools/AIK-Linux/cleanup.sh --nosudo
 }
 PACK_JACKPOT2LTE_IMG()
@@ -81,7 +81,7 @@ PACK_JACKPOT2LTE_IMG()
 	mv $SW_DIR/arch/arm64/boot/Image $SW_DIR/sw-tools/AIK-Linux/split_img/boot.img-zImage
 	mv $(pwd)/dtb.img $SW_DIR/sw-tools/AIK-Linux/split_img/boot.img-dtb
 	$SW_DIR/sw-tools/AIK-Linux/repackimg.sh --nosudo
-	mv $SW_DIR/sw-tools/AIK-Linux/image-new.img $SW_DIR/sw-tools/out/boot-$SW_VARIANT-$SW_DATE.img
+	mv $SW_DIR/sw-tools/AIK-Linux/image-new.img $SW_DIR/sw-tools/out/boot-$SW_VARIANT.img
 	$SW_DIR/sw-tools/AIK-Linux/cleanup.sh --nosudo
 }
 # Main Menu
