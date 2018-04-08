@@ -90,8 +90,8 @@ echo "----------------------------------------------"
 echo "SwiftKernel $SW_VERSION Build Script"
 echo "Coded by BlackMesa/TaifAljaloo/ananjaser1211"
 echo "----------------------------------------------"
-PS3='Please select your option (1-3): '
-menuvar=("JACKPOTLTE" "JACKPOT2LTE" "Exit")
+PS3='Please select your option (1-4): '
+menuvar=("JACKPOTLTE" "JACKPOT2LTE" "Pack a Zip" "Exit")
 select menuvar in "${menuvar[@]}"
 do
     case $menuvar in
@@ -143,9 +143,37 @@ do
             read -n1 -r key
             break
             ;;
+			"Pack a Zip")
+			echo "----------------------------------------------"
+            echo "Copying boot images to kernel zip..."
+            echo " "
+            cp -rf $SW_DIR/sw-tools/out/boot-A530F.img $SW_DIR/sw-tools/swiftkernel/swift/a530f
+			cp -rf $SW_DIR/sw-tools/out/boot-A730F.img $SW_DIR/sw-tools/swiftkernel/swift/a730f
+			echo "----------------------------------------------"
+            echo "packing a flashable zip...."
+            echo " "
+            cd $SW_DIR/sw-tools/swiftkernel/
+            zip -r -9 - * > SWIFT-KERNEL-$SW_VERSION.zip 
+            echo "----------------------------------------------"
+            echo "Copying the flashabel zip into the phone..."
+            mv $SW_DIR/sw-tools/swiftkernel/SWIFT-KERNEL-$SW_VERSION.zip $SW_DIR/sw-tools/ADB
+            cd $SW_DIR/sw-tools/ADB
+            adb devices
+            adb push SWIFT-KERNEL-$SW_VERSION.zip  /sdcard/
+             echo "----------------------------------------------"
+            echo "Rebooting the phone into twrp..."
+            cd $SW_DIR/sw-tools/ADB
+            adb reboot recovery
+            echo "----------------------------------------------"
+            echo "Packing the zip and copying it to the phone is done 
+                  flash it and enjoy your time..."
+			read -n1 -r key
+            break
+            ;;
         "Exit")
             break
             ;;
         *) echo Invalid option.;;
     esac
 done
+
