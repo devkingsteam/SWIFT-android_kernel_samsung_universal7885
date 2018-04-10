@@ -33,11 +33,11 @@ set_progress(0.20);
 ui_print("Installing kernel");
 if file_getprop("/tmp/aroma/kernel.prop","selected.0") == "1" then
 ui_print("Flashing Swift Kernel for Galaxy A8/A530F");
-package_extract_file("swift/a530f/boot.img", "/dev/block/mmcblk0p12");
+package_extract_file("swift/a530f/boot-A530F.img", "/dev/block/mmcblk0p12");
 endif;
 if file_getprop("/tmp/aroma/kernel.prop","selected.0") == "2" then
 ui_print("Flashing Swift Kernel for Galaxy A8+/A730F");
-package_extract_file("swift/a730f/boot.img", "/dev/block/mmcblk0p12");
+package_extract_file("swift/a730f/boot-A730F.img", "/dev/block/mmcblk0p12");
 endif;
 
 ui_print("-Installing Magisk");
